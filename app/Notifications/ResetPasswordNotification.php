@@ -39,7 +39,7 @@ class ResetPasswordNotification extends Notification
     public function toMail(): MailMessage
 {
     // Lien sans token ni email
-    $frontendUrl = config('app.frontend_url') . '/auth/modifypassword?token=' . $this->token . '&email=' . urlencode($this->email);
+    $frontendUrl = config('app.frontend_url') . '/auth/reset-password?token=' . $this->token . '&email=' . urlencode($this->email);
 
     return (new MailMessage)
         ->subject('Reset Your Password')
