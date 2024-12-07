@@ -12,6 +12,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
+
 
 
 class AuthController extends Controller
@@ -22,7 +24,6 @@ class AuthController extends Controller
 
         $user = User::create([
             'email' => $validated['email'],
-            'name' => $validated['name'],
             'password' => Hash::make($validated['password']),
         ]);
 
@@ -42,7 +43,7 @@ class AuthController extends Controller
 
         if (!Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']], true)) {
             throw ValidationException::withMessages([
-                'email' => ['Les informations de connexion sont incorrectes.'],
+                'email' => ['The login information is incorrect.'],
             ]);
         }
 
@@ -115,4 +116,36 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+     // Redirection vers le fournisseur OAuth
+     public function redirectToProvider($provider)
+     {
+         return Socialite::driver($provider)->stateless()->redirect();
+     }
+ 
+     // Callback du fournisseur OAuth
+     public function handleProviderCallback($provider)
+     {
+         try {
+             // Récupérer les informations utilisateur depuis le fournisseur
+             $socialUser = Socialite::driver($provider)->stateless()->user();
+ 
+             // Rechercher ou créer un utilisateur
+             $user = User::updateOrCreate(
+                 ['email' => $socialUser->getEmail()],
+                 [
+                     "{$provider}_id" => $socialUser->getId(),
+                     'password' => bcrypt(uniqid()), // Génère un mot de passe aléatoire
+                 ]
+             );
+ 
+             // Générer un token Sanctum pour l'utilisateur
+             $token = $user->createToken('AuthToken')->plainTextToken;
+ 
+             // Rediriger vers le frontend avec le token
+             return redirect(config('app.frontend_url') . '/auth/callback?token=' . $token);
+         } catch (\Exception $e) {
+             return redirect(config('app.frontend_url') . '/auth/error?message=' . urlencode($e->getMessage()));
+         }
+     }
 }

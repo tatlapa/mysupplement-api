@@ -11,7 +11,6 @@ class CreateUserRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'name' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', Password::min(8), 'confirmed'],
             'password_confirmation' => ['required', 'string'],
             'hostname' => ['required', 'string'],
@@ -24,9 +23,6 @@ class CreateUserRequest extends FormRequest
             'email.required' => 'The email address is required.',
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'This email address is already in use.',
-
-            'name.required' => 'The username is required.',
-            'name.unique' => 'This username is already in use.',
 
             'password.required' => 'The password is required.',
             'password.confirmed' => 'The password confirmation does not match.',
