@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\AdvicerController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('/register', 'register');
@@ -19,9 +20,11 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 
     Route::post('/user', 'user')->middleware('auth:sanctum');
 
-    // Social Login Routes
-    Route::get('/redirect/{provider}', 'redirectToProvider');
-    Route::get('/callback/{provider}', 'handleProviderCallback');
+    // Social Login Routes (with middleware web)
+    Route::middleware(['web'])->group(function () {
+        Route::get('/redirect/{provider}', 'redirectToProvider');
+        Route::get('/callback/{provider}', 'handleProviderCallback');
+    });
 });
 
 Route::controller(UserController::class)->prefix('user')->middleware('auth:sanctum')->group(function () {
@@ -29,3 +32,5 @@ Route::controller(UserController::class)->prefix('user')->middleware('auth:sanct
     Route::post('/', 'updateProfile');
     Route::post('/password', 'updatePassword');
 });
+
+Route::post('/getSupplementRecommendations', [AdvicerController::class, 'getSupplementRecommendations']);

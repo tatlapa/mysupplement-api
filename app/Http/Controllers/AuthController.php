@@ -12,6 +12,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Event;
+use function Illuminate\Support\Facades\event;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -120,7 +122,7 @@ class AuthController extends Controller
      // Redirection vers le fournisseur OAuth
      public function redirectToProvider($provider)
      {
-         return Socialite::driver($provider)->stateless()->redirect();
+         return Socialite::driver($provider)->redirect();
      }
  
      // Callback du fournisseur OAuth
@@ -128,7 +130,7 @@ class AuthController extends Controller
      {
          try {
              // Récupérer les informations utilisateur depuis le fournisseur
-             $socialUser = Socialite::driver($provider)->stateless()->user();
+             $socialUser = Socialite::driver($provider)->user();
  
              // Rechercher ou créer un utilisateur
              $user = User::updateOrCreate(
