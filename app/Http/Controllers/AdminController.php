@@ -21,6 +21,8 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
+            'description' => 'required',
+            'stock_quantity' => 'required|numeric',
             'category_id' => 'required|exists:categories,id'
         ]);
 

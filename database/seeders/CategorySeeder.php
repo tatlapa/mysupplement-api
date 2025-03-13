@@ -10,8 +10,8 @@ class CategorySeeder extends Seeder
     public function run()
     {
         Category::insert([
-            ['name' => 'Sport', 'name' => 'Health'],
-
+            ['name' => 'Sport'],
+            ['name' => 'Health']
         ]);
     }
 }
