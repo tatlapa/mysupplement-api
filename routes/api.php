@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdvicerController;
+use App\Http\Controllers\AdminController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('/register', 'register');
@@ -31,6 +32,24 @@ Route::controller(UserController::class)->prefix('user')->middleware('auth:sanct
     Route::get('/', 'index');
     Route::post('/', 'updateProfile');
     Route::post('/password', 'updatePassword');
+});
+
+Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Products
+    Route::get('products','getProducts');
+    Route::post('products','storeProduct');
+    Route::put('products/{product}','updateProduct');
+    Route::delete('products/{product}','deleteProduct');
+
+    // Catégories
+    Route::get('categories', 'getCategories');
+    Route::post('categories', 'storeCategory');
+    Route::delete('categories/{category}', 'deleteCategory');
+
+    // Images
+    Route::get('product-images', 'getProductImages');
+    Route::post('product-images', 'storeProductImage');
+    Route::delete('product-images/{productImage}', 'deleteProductImage');
 });
 
 Route::post('/getSupplementRecommendations', [AdvicerController::class, 'getSupplementRecommendations']);
