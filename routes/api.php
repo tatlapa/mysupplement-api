@@ -45,11 +45,6 @@ Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sa
     Route::get('categories', 'getCategories');
     Route::post('categories', 'storeCategory');
     Route::delete('categories/{category}', 'deleteCategory');
-
-    // Images
-    Route::get('product-images', 'getProductImages');
-    Route::post('product-images', 'storeProductImage');
-    Route::delete('product-images/{productImage}', 'deleteProductImage');
 });
 
 Route::post('/getSupplementRecommendations', [AdvicerController::class, 'getSupplementRecommendations']);
