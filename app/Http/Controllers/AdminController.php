@@ -13,7 +13,7 @@ class AdminController extends Controller
     /** 🔹 PRODUITS */
     public function getProducts()
     {
-        return response()->json(Product::with('category')->get());
+        return response()->json(Product::with('category', 'image')->get());
     }
 
     public function storeProduct(Request $request)
@@ -23,7 +23,8 @@ class AdminController extends Controller
             'price' => 'required|numeric',
             'description' => 'required',
             'stock_quantity' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'image_url' => 'required',
         ]);
 
         $product = Product::create($request->all());
@@ -73,35 +74,35 @@ class AdminController extends Controller
         return response()->json(null, 204);
     }
 
-    /** 🔹 IMAGES */
-    public function getProductImages()
-    {
-        return response()->json(ProductImage::with('product')->get());
-    }
-
-    public function storeProductImage(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:product,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
-        // Sauvegarde de l’image
-        $path = $request->file('image')->store('product_images', 'public');
-
-        $image = ProductImage::create([
-            'product_id' => $request->product_id,
-            'image_path' => $path
-        ]);
-
-        return response()->json($image, 201);
-    }
-
-    public function deleteProductImage(ProductImage $productImage)
-    {
-        Storage::disk('public')->delete($productImage->image_path); // Supprime le fichier
-        $productImage->delete(); // Supprime la ligne en BDD
-
-        return response()->json(null, 204);
-    }
+        /** 🔹 IMAGES */
+        public function getProductImages()
+        {
+            return response()->json(ProductImage::with('product')->get());
+        }
+    
+        public function storeProductImage(Request $request)
+        {
+            $request->validate([
+                'product_id' => 'required|exists:product,id',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
+    
+            // Sauvegarde de l’image
+            $path = $request->file('image')->store('product_images', 'public');
+    
+            $image = ProductImage::create([
+                'product_id' => $request->product_id,
+                'image_path' => $path
+            ]);
+    
+            return response()->json($image, 201);
+        }
+    
+        public function deleteProductImage(ProductImage $productImage)
+        {
+            Storage::disk('public')->delete($productImage->image_path); // Supprime le fichier
+            $productImage->delete(); // Supprime la ligne en BDD
+    
+            return response()->json(null, 204);
+        }
 }
