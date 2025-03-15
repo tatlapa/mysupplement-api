@@ -34,9 +34,9 @@ Route::controller(UserController::class)->prefix('user')->middleware('auth:sanct
     Route::post('/password', 'updatePassword');
 });
 
+Route::middleware(['auth:sanctum'])->get('/products', [AdminController::class, 'getProducts']);
 Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
     // Products
-    Route::get('products','getProducts');
     Route::post('products','storeProduct');
     Route::post('products/{product}','updateProduct');
     Route::delete('products/{product}','deleteProduct');
