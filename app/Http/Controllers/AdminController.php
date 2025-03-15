@@ -19,9 +19,9 @@ class AdminController extends Controller
     public function storeProduct(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string',
             'price' => 'required|numeric',
-            'description' => 'required',
+            'description' => 'required|string',
             'stock_quantity' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'image' => 'required|image|max:2048',
@@ -49,15 +49,28 @@ class AdminController extends Controller
     public function updateProduct(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string',
             'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id'
+            'description' => 'required|string',
+            'stock_quantity' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'required|image|max:2048',
         ]);
 
-        $product->update($request->all());
+        if ($request->hasFile('image')) {
+            if ($product->image_url) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $product->image_url));
+            }
+
+            $imagePath = $request->file('image')->store('products', 'public');
+            $product->image_url = '/storage/' . $imagePath;
+        }
+
+        $product->update($request->only(['name', 'price', 'description', 'stock_quantity', 'category_id', 'image_url']));
 
         return response()->json($product);
     }
+
 
     public function deleteProduct(Product $product)
     {

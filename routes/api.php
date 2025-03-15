@@ -38,13 +38,13 @@ Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sa
     // Products
     Route::get('products','getProducts');
     Route::post('products','storeProduct');
-    Route::put('products/{product}','updateProduct');
+    Route::post('products/{product}','updateProduct');
     Route::delete('products/{product}','deleteProduct');
 
     // Catégories
     Route::get('categories', 'getCategories');
-    Route::post('categories', 'storeCategory');
-    Route::delete('categories/{category}', 'deleteCategory');
+    // Route::post('categories', 'storeCategory');
+    // Route::delete('categories/{category}', 'deleteCategory');
 });
 
 Route::post('/getSupplementRecommendations', [AdvicerController::class, 'getSupplementRecommendations']);
