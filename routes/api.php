@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ShopController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdvicerController;
 use App\Http\Controllers\AdminController;
@@ -34,9 +35,15 @@ Route::controller(UserController::class)->prefix('user')->middleware('auth:sanct
     Route::post('/password', 'updatePassword');
 });
 
-Route::middleware(['auth:sanctum'])->get('/products', [AdminController::class, 'getProducts']);
+Route::controller(ShopController::class)->prefix('shop')->group(function () {
+    Route::get('products', 'getProducts');
+    Route::get('products/{id}', 'getProduct');
+    Route::get('categories', 'getCategories');
+});
+
 Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
     // Products
+    Route::get('products','getProducts');
     Route::post('products','storeProduct');
     Route::post('products/{product}','updateProduct');
     Route::delete('products/{product}','deleteProduct');
