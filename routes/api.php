@@ -9,6 +9,7 @@ use App\Http\Controllers\ShopController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdvicerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('/register', 'register');
@@ -37,8 +38,15 @@ Route::controller(UserController::class)->prefix('user')->middleware('auth:sanct
 
 Route::controller(ShopController::class)->prefix('shop')->group(function () {
     Route::get('products', 'getProducts');
-    Route::get('products/{id}', 'getProduct');
+    Route::get('products/{product}', 'getProduct');
     Route::get('categories', 'getCategories');
+});
+
+Route::controller(CartController::class)->prefix('cart')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', 'getCart');
+    Route::post('/add', 'addToCart');
+    Route::delete('/delete/{item}', 'removeFromCart');
+    Route::patch('/update', 'updateCart');
 });
 
 Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
