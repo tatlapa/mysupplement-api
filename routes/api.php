@@ -10,6 +10,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdvicerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\StripeController;
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post('/register', 'register');
@@ -60,6 +61,12 @@ Route::controller(AdminController::class)->prefix('admin')->middleware(['auth:sa
     Route::get('categories', 'getCategories');
     // Route::post('categories', 'storeCategory');
     // Route::delete('categories/{category}', 'deleteCategory');
+});
+
+Route::controller(StripeController::class)->prefix('payment')->group(function () {
+    Route::post('initiate', 'initiatePayment');
+    Route::post('complete', 'completePayment');
+    Route::post('failure', 'failPayment');
 });
 
 Route::post('/getSupplementRecommendations', [AdvicerController::class, 'getSupplementRecommendations']);
