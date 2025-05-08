@@ -83,21 +83,4 @@ class AdminController extends Controller
     {
         return response()->json(Category::all());
     }
-
-    public function storeCategory(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:categories,name|max:255',
-        ]);
-
-        $category = Category::create($request->all());
-
-        return response()->json($category, 201);
-    }
-
-    public function deleteCategory(Category $category)
-    {
-        $category->delete();
-        return response()->json(null, 204);
-    }
 }

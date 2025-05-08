@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ShopController;
-use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\AdvicerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
