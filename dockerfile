@@ -31,7 +31,9 @@ RUN composer install --no-dev --optimize-autoloader
 
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
+    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache    
+RUN chmod -R 755 /var/www/public
+
 
 # Copy the custom entrypoint script
 COPY entrypoint.sh /entrypoint.sh
