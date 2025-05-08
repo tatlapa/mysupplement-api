@@ -3,6 +3,8 @@
 # Stop on error
 set -e
 
+php artisan storage:link || echo "🔗 Le lien storage existe déjà"
+
 php artisan config:clear
 php artisan config:cache
 
