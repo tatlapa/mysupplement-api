@@ -3,6 +3,8 @@
 # Stop on error
 set -e
 
+php artisan config:clear
+php artisan config:cache
 
 echo "⚙️ Running migrations..."
 php artisan migrate --force
