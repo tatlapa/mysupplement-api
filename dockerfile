@@ -29,16 +29,16 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
+# Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
-# Run Laravel setup commands
-RUN php artisan config:clear \
- && php artisan config:cache \
- && php artisan migrate --force \
- && php artisan db:seed --force
+# Copy the custom entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Expose port and start server
+# Expose the port Laravel will run on
 EXPOSE 8000
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
+# Run the entrypoint script on container start
+ENTRYPOINT ["/entrypoint.sh"]
