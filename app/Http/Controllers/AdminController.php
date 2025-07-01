@@ -74,8 +74,15 @@ class AdminController extends Controller
 
     public function deleteProduct(Product $product)
     {
+        // Supprimer l'image du stockage si elle existe
+        if ($product->image_url) {
+            Storage::disk('public')->delete(str_replace('/storage/', '', $product->image_url));
+        }
+
+        // Supprimer le produit de la base de données
         $product->delete();
-        return response()->json(null, 204);
+        
+        return response()->json(['message' => 'Produit supprimé avec succès'], 200);
     }
 
     /** 🔹 CATEGORIES */
