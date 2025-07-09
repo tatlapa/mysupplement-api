@@ -5,11 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\ProductImage;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     /** 🔹 PRODUCTS */
     public function getProducts()
     {
@@ -28,8 +36,7 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-            $imageUrl = '/storage/' . $imagePath; 
+            $imageUrl = $this->imageService->uploadImage($request->file('image'), 'products');
         } else {
             return response()->json(['error' => 'Image upload failed'], 400);
         }
@@ -59,11 +66,10 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             if ($product->image_url) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $product->image_url));
+                $this->imageService->deleteImage($product->image_url);
             }
 
-            $imagePath = $request->file('image')->store('products', 'public');
-            $product->image_url = '/storage/' . $imagePath;
+            $product->image_url = $this->imageService->uploadImage($request->file('image'), 'products');
         }
 
         $product->update($request->only(['name', 'price', 'description', 'stock_quantity', 'category_id', 'image_url']));
@@ -76,7 +82,7 @@ class AdminController extends Controller
     {
         // Supprimer l'image du stockage si elle existe
         if ($product->image_url) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $product->image_url));
+            $this->imageService->deleteImage($product->image_url);
         }
 
         // Supprimer le produit de la base de données
