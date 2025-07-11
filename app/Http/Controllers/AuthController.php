@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Event;
-use function Illuminate\Support\Facades\event;
 use Laravel\Socialite\Facades\Socialite;
 
 
