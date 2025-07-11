@@ -149,7 +149,7 @@ class AuthController extends Controller
                  ['email' => $socialUser->getEmail()],
                  [
                      "{$provider}_id" => $socialUser->getId(),
-                     'password' => bcrypt(uniqid()), // Génère un mot de passe aléatoire
+                     // Pas de mot de passe pour les utilisateurs Google
                  ]
              );
  

@@ -38,6 +38,15 @@ class User extends Authenticatable implements CanResetPassword
     ];
 
     /**
+     * The attributes that should be appended to arrays.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'has_password',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -53,5 +62,13 @@ class User extends Authenticatable implements CanResetPassword
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswordNotification($token, $this->email));
+    }
+
+    /**
+     * Get whether the user has a password set.
+     */
+    public function getHasPasswordAttribute(): bool
+    {
+        return !empty($this->password);
     }
 }
