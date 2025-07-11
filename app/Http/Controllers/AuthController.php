@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -66,21 +67,33 @@ class AuthController extends Controller
 
     public function sendResetLinkEmail(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        try {
+            $request->validate(['email' => 'required|email']);
 
-        // Vérification de l'email dans la base de données
-        $user = User::where('email', $request->email)->first();
+            // Vérification de l'email dans la base de données
+            $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'This email address is not registered.'], 404);
+            if (!$user) {
+                return response()->json(['message' => 'This email address is not registered.'], 404);
+            }
+
+            // Envoi du lien de réinitialisation si l'email existe
+            $status = Password::sendResetLink($request->only('email'));
+
+            return $status === Password::RESET_LINK_SENT
+                ? response()->json(['message' => __($status)], 200)
+                : response()->json(['message' => __($status)], 400);
+        } catch (\Exception $e) {
+            Log::error('Password reset error: ' . $e->getMessage(), [
+                'email' => $request->email,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'message' => 'An error occurred while processing your request.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         }
-
-        // Envoi du lien de réinitialisation si l'email existe
-        $status = Password::sendResetLink($request->only('email'));
-
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => __($status)], 200)
-            : response()->json(['message' => __($status)], 400);
     }
 
 
