@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Profile\UpdatePasswordRequest;
 use App\Http\Requests\Profile\UpdateProfileRequest;
+use App\Http\Requests\Profile\DeleteUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
 class UserController extends Controller
 {
 
-    public function index(Request $request)
+    public function getUser(Request $request)
     {
         return response()->json($request->user());
     }
@@ -32,5 +32,14 @@ class UserController extends Controller
         ]);
 
         return response()->json($request->user());
+    }
+
+    public function deleteUser(DeleteUserRequest $request)
+    {
+        $validated = $request->validated();
+
+        $request->user()->delete($validated);
+
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }

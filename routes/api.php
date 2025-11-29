@@ -31,9 +31,10 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 });
 
 Route::controller(UserController::class)->prefix('user')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', 'index');
+    Route::get('/', 'getUser');
     Route::post('/', 'updateProfile');
     Route::post('/password', 'updatePassword');
+    Route::delete('/delete', 'deleteUser');
 });
 
 Route::controller(ShopController::class)->prefix('shop')->group(function () {

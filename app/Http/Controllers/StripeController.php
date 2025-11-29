@@ -22,8 +22,8 @@ class StripeController extends Controller
         try {
     
             $paymentIntent = PaymentIntent::create([
-                    'amount' => 30000,
-            'currency' => 'usd',
+                'amount' => 30000,
+                'currency' => 'usd',
                 'automatic_payment_methods' => [
                     'enabled' => true,
                 ],
