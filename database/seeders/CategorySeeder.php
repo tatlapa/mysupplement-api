@@ -9,9 +9,8 @@ class CategorySeeder extends Seeder
 {
     public function run()
     {
-        Category::insert([
-            ['name' => 'Sport'],
-            ['name' => 'Health']
-        ]);
+        foreach (['Sport', 'Health'] as $name) {
+            Category::firstOrCreate(['name' => $name]);
+        }
     }
 }
