@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use OpenAI;
+use Illuminate\Support\Facades\Http;
 
 class AdvicerService
 {
@@ -22,24 +22,23 @@ class AdvicerService
     {
         $prompt = $this->buildPrompt($data);
 
-        $client = OpenAI::factory()
-            ->withApiKey(config('services.groq.key'))
-            ->withBaseUri('https://api.groq.com/openai/v1')
-            ->make();
+        // Appel direct : la bibliothèque openai-php plantait sur l'usage renvoyé par Groq
+        $response = Http::withToken(config('services.groq.key'))
+            ->timeout(60)
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                'model'    => config('services.groq.model'),
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are a knowledgeable supplement advisor. Provide evidence-based recommendations tailored to the user\'s profile. Always respond with valid JSON.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+                // gpt-oss raisonne avant de répondre : un effort bas suffit ici
+                'reasoning_effort' => 'low',
+                'temperature'      => 0.7,
+                'max_tokens'       => 4000,
+            ])
+            ->throw();
 
-        $response = $client->chat()->create([
-            'model'    => config('services.groq.model'),
-            // gpt-oss raisonne avant de répondre : un effort bas suffit ici
-            'reasoning_effort' => 'low',
-            'messages' => [
-                ['role' => 'system', 'content' => 'You are a knowledgeable supplement advisor. Provide evidence-based recommendations tailored to the user\'s profile. Always respond with valid JSON.'],
-                ['role' => 'user', 'content' => $prompt],
-            ],
-            'temperature' => 0.7,
-            'max_tokens'  => 4000,
-        ]);
-
-        $raw = $response['choices'][0]['message']['content'] ?? null;
+        $raw = $response->json('choices.0.message.content');
 
         if (!$raw) {
             throw new \RuntimeException('No response from AI');
