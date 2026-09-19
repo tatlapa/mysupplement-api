@@ -44,4 +44,8 @@ return [
     'stripe' => [
     'secret' => env('STRIPE_SECRET'),
     ],
+
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+    ],
 ];

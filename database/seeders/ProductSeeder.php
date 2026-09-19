@@ -9,7 +9,7 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $base = rtrim(env('AWS_URL'), '/');
+        $base = rtrim(config('filesystems.disks.s3.url'), '/');
 
         $products = [
             // Sport

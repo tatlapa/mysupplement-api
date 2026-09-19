@@ -23,7 +23,7 @@ class AdvicerService
         $prompt = $this->buildPrompt($data);
 
         $client = OpenAI::factory()
-            ->withApiKey(env('GROQ_API_KEY'))
+            ->withApiKey(config('services.groq.key'))
             ->withBaseUri('https://api.groq.com/openai/v1')
             ->make();
 
