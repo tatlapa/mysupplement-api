@@ -47,5 +47,7 @@ return [
 
     'groq' => [
         'key' => env('GROQ_API_KEY'),
+        // Groq retire régulièrement des modèles : llama-3.3-70b-versatile a disparu en 2026
+        'model' => env('GROQ_MODEL', 'openai/gpt-oss-120b'),
     ],
 ];

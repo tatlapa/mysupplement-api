@@ -28,13 +28,15 @@ class AdvicerService
             ->make();
 
         $response = $client->chat()->create([
-            'model'    => 'llama-3.3-70b-versatile',
+            'model'    => config('services.groq.model'),
+            // gpt-oss raisonne avant de répondre : un effort bas suffit ici
+            'reasoning_effort' => 'low',
             'messages' => [
                 ['role' => 'system', 'content' => 'You are a knowledgeable supplement advisor. Provide evidence-based recommendations tailored to the user\'s profile. Always respond with valid JSON.'],
                 ['role' => 'user', 'content' => $prompt],
             ],
             'temperature' => 0.7,
-            'max_tokens'  => 2000,
+            'max_tokens'  => 4000,
         ]);
 
         $raw = $response['choices'][0]['message']['content'] ?? null;
